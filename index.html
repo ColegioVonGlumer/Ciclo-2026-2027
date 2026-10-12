@@ -37,8 +37,17 @@ input:focus{ border-color:var(--azul); box-shadow:0 0 0 3px rgba(27,58,140,.15);
   position:absolute; right:6px; top:50%; transform:translateY(-50%); border:0; background:none; cursor:pointer;
   padding:8px; color:#5B6272; font:inherit; font-size:9pt; font-weight:600;
 }
-.recordar{ display:flex; align-items:center; gap:8px; font-size:10pt; color:#5B6272; margin:4px 2px 18px; text-align:left; }
-.recordar input{ width:16px; height:16px; accent-color:var(--azul); }
+.bio{
+  width:100%; padding:13px; border-radius:12px; cursor:pointer; font:inherit; font-weight:700; font-size:11.5pt;
+  background:#fff; color:var(--azul); border:1.5px solid var(--azul); margin-bottom:16px;
+}
+.bio:hover{ background:#F1F4FC; }
+.bio:disabled{ opacity:.65; cursor:wait; }
+.o{ display:flex; align-items:center; gap:10px; font-size:9pt; color:#8A90A0; margin:0 0 14px; }
+.o::before, .o::after{ content:""; flex:1; height:1px; background:var(--linea); }
+.enlace{ display:inline-block; margin-top:14px; background:none; border:0; font:inherit; font-size:10pt; font-weight:600; color:var(--azul); cursor:pointer; text-decoration:underline; }
+.texto{ font-size:10.5pt; line-height:1.5; color:#4A5163; margin:0 0 22px; }
+[hidden]{ display:none !important; }
 button.entrar{
   width:100%; padding:13px; border:0; border-radius:12px; cursor:pointer; font:inherit; font-weight:700; font-size:12pt;
   background:var(--amarillo); color:var(--azul-oscuro); transition:filter .15s;
@@ -57,21 +66,33 @@ button.entrar:disabled{ opacity:.65; cursor:wait; }
   <img class="logo" src="logo.png" alt="Escudo Colegio Von Glumer">
   <h1>Colegio Von Glumer</h1>
   <p class="sub">Acceso para el personal</p>
+  <div id="bloque-bio" hidden>
+    <button type="button" class="bio" id="bio">Entrar con huella o Face ID</button>
+    <p class="o">o con contraseña</p>
+  </div>
   <div class="campo">
-    <input type="password" id="clave" placeholder="Contraseña" autocomplete="current-password" autofocus>
+    <input type="password" id="clave" placeholder="Contraseña" autocomplete="current-password">
     <button type="button" class="ver" id="ver" aria-label="Mostrar contraseña">Ver</button>
   </div>
-  <label class="recordar"><input type="checkbox" id="recordar" checked> Recordar en este dispositivo</label>
   <button class="entrar" id="entrar" type="submit">Entrar</button>
   <p class="error" id="error" role="alert"></p>
   <div class="pie">Cardel, Veracruz</div>
 </form>
-<script type="application/json" id="datos">{"s":"VsdF14ed5U7v0YQuuuX50w==","n":1000000,"i":"NoKbs4n5mOOaPmhk","c":"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"}</script>
+<div class="tarjeta" id="enrolar">
+  <img class="logo" src="logo.png" alt="Escudo Colegio Von Glumer">
+  <h1>Huella o Face ID</h1>
+  <p class="texto">Actívala en este dispositivo y la próxima vez entrarás con ella, sin escribir la contraseña.</p>
+  <button class="entrar" id="activar" type="button">Activar</button>
+  <button class="enlace" id="ahora-no" type="button">Ahora no</button>
+</div>
+<script type="application/json" id="datos">{"s":"ugs/ZtqkcQ94Sxzef3dQoQ==","n":1000000,"i":"bLG9unCr081odMV7","c":"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"}</script>
 <script>
 (function () {
   var D = JSON.parse(document.getElementById('datos').textContent);
   var $ = function (id) { return document.getElementById(id); };
-  var LLAVE = 'vgk';
+  var SESION = 'vgk', DISPOSITIVO = 'vgb';
+  var SAL_PRF = new TextEncoder().encode('colegio-von-glumer/prf/1');
+  var forzarRegistro = false;
 
   function bytes(b64) {
     var s = atob(b64), a = new Uint8Array(s.length);
@@ -83,15 +104,16 @@ button.entrar:disabled{ opacity:.65; cursor:wait; }
     for (var i = 0; i < a.length; i++) s += String.fromCharCode(a[i]);
     return btoa(s);
   }
-  function leer() {
-    try { return localStorage.getItem(LLAVE) || sessionStorage.getItem(LLAVE); } catch (e) { return null; }
-  }
-  function borrar() {
-    try { localStorage.removeItem(LLAVE); sessionStorage.removeItem(LLAVE); } catch (e) {}
-  }
-  function guardar(b64, permanente) {
-    try { (permanente ? localStorage : sessionStorage).setItem(LLAVE, b64); } catch (e) {}
-  }
+  function aleatorio(n) { return crypto.getRandomValues(new Uint8Array(n)); }
+
+  function sesionLeer() { try { return sessionStorage.getItem(SESION); } catch (e) { return null; } }
+  function sesionGuardar(v) { try { sessionStorage.setItem(SESION, v); } catch (e) {} }
+  function sesionBorrar() { try { sessionStorage.removeItem(SESION); } catch (e) {} }
+  function dispLeer() { try { return JSON.parse(localStorage.getItem(DISPOSITIVO) || 'null'); } catch (e) { return null; } }
+  function dispGuardar(o) { try { localStorage.setItem(DISPOSITIVO, JSON.stringify(o)); } catch (e) {} }
+  function dispBorrar() { try { localStorage.removeItem(DISPOSITIVO); } catch (e) {} }
+  try { localStorage.removeItem(SESION); } catch (e) {}
+
   async function descifrar(llave) {
     var buf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(D.i) }, llave, bytes(D.c));
     return new TextDecoder().decode(buf);
@@ -112,24 +134,89 @@ button.entrar:disabled{ opacity:.65; cursor:wait; }
   function llaveDesdeBytes(b64) {
     return crypto.subtle.importKey('raw', bytes(b64), { name: 'AES-GCM' }, false, ['decrypt']);
   }
-  function formulario() {
-    $('abriendo').classList.remove('visible');
-    $('tarjeta').classList.add('visible');
-    $('clave').focus();
+
+  /* ---------- huella o Face ID (WebAuthn) ---------- */
+  async function bioDisponible() {
+    try {
+      return !!(window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
+        await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+    } catch (e) { return false; }
+  }
+  async function llaveEnvoltura(secreto) {
+    var base = await crypto.subtle.importKey('raw', secreto, 'HKDF', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info: new TextEncoder().encode('vg-envoltura') },
+      base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function verificar(id, conPrf) {
+    var pk = {
+      challenge: aleatorio(32),
+      allowCredentials: [{ type: 'public-key', id: id, transports: ['internal'] }],
+      userVerification: 'required', timeout: 60000
+    };
+    if (conPrf) pk.extensions = { prf: { eval: { first: SAL_PRF } } };
+    var r = await navigator.credentials.get({ publicKey: pk });
+    var ext = r.getClientExtensionResults();
+    return ext.prf && ext.prf.results ? ext.prf.results.first : null;
+  }
+  async function registrar(rawB64) {
+    var cred = await navigator.credentials.create({ publicKey: {
+      rp: { name: 'Colegio Von Glumer', id: location.hostname },
+      user: { id: aleatorio(16), name: 'personal', displayName: 'Personal Von Glumer' },
+      challenge: aleatorio(32),
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+      authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
+      attestation: 'none', timeout: 60000,
+      extensions: { prf: { eval: { first: SAL_PRF } } }
+    } });
+    var ext = cred.getClientExtensionResults();
+    var prf = ext.prf || {};
+    var secreto = prf.results ? prf.results.first : null;
+    if (prf.enabled && !secreto) secreto = await verificar(cred.rawId, true);
+    var rec = { id: aB64(cred.rawId) };
+    if (secreto) {
+      var iv = aleatorio(12);
+      var cif = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, await llaveEnvoltura(secreto), bytes(rawB64));
+      rec.modo = 'prf'; rec.iv = aB64(iv); rec.w = aB64(cif);
+    } else {
+      rec.modo = 'basico'; rec.k = rawB64;
+    }
+    dispGuardar(rec);
+  }
+  async function desbloquear(rec) {
+    var secreto = await verificar(bytes(rec.id), rec.modo === 'prf');
+    if (rec.modo === 'prf') {
+      if (!secreto) throw new Error('sin prf');
+      var buf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes(rec.iv) }, await llaveEnvoltura(secreto), bytes(rec.w));
+      return aB64(buf);
+    }
+    return rec.k;
+  }
+
+  /* ---------- pantallas ---------- */
+  function ver(id) {
+    ['abriendo', 'tarjeta', 'enrolar'].forEach(function (x) { $(x).classList.toggle('visible', x === id); });
+  }
+  async function iniciar() {
+    var rec = dispLeer();
+    if (rec && await bioDisponible()) $('bloque-bio').hidden = false;
+    else if (rec) dispBorrar();
+    ver('tarjeta');
+    if ($('bloque-bio').hidden) $('clave').focus();
   }
 
   if (!window.crypto || !crypto.subtle) {
-    $('tarjeta').classList.add('visible');
+    ver('tarjeta');
     $('error').textContent = 'Este navegador no puede abrir la página. Prueba con una versión más reciente.';
     return;
   }
 
-  var guardada = leer();
-  if (guardada) {
-    $('abriendo').classList.add('visible');
-    llaveDesdeBytes(guardada).then(descifrar).then(mostrar).catch(function () { borrar(); formulario(); });
+  var enSesion = sesionLeer();
+  if (enSesion) {
+    ver('abriendo');
+    llaveDesdeBytes(enSesion).then(descifrar).then(mostrar).catch(function () { sesionBorrar(); iniciar(); });
   } else {
-    formulario();
+    iniciar();
   }
 
   $('ver').addEventListener('click', function () {
@@ -138,21 +225,58 @@ button.entrar:disabled{ opacity:.65; cursor:wait; }
     $('ver').textContent = oculto ? 'Ocultar' : 'Ver';
   });
 
+  $('bio').addEventListener('click', async function () {
+    var rec = dispLeer();
+    if (!rec) { $('bloque-bio').hidden = true; return; }
+    $('error').textContent = '';
+    $('bio').disabled = true;
+    var raw;
+    try {
+      raw = await desbloquear(rec);
+    } catch (e) {
+      forzarRegistro = true;
+      $('bio').disabled = false;
+      $('error').textContent = 'No se pudo verificar. Escribe la contraseña.';
+      return;
+    }
+    try {
+      var html = await descifrar(await llaveDesdeBytes(raw));
+      sesionGuardar(raw);
+      mostrar(html);
+    } catch (e) {
+      dispBorrar();
+      $('bloque-bio').hidden = true;
+      $('error').textContent = 'La contraseña cambió. Escríbela de nuevo.';
+    }
+  });
+
   $('tarjeta').addEventListener('submit', async function (e) {
     e.preventDefault();
     var clave = $('clave').value;
     if (!clave) return;
     $('entrar').disabled = true; $('entrar').textContent = 'Verificando…'; $('error').textContent = '';
+    var html, raw;
     try {
       var llave = await llaveDesdeClave(clave);
-      var html = await descifrar(llave);
-      var raw = await crypto.subtle.exportKey('raw', llave);
-      guardar(aB64(raw), $('recordar').checked);
-      mostrar(html);
+      html = await descifrar(llave);
+      raw = aB64(await crypto.subtle.exportKey('raw', llave));
     } catch (err) {
       $('error').textContent = 'Contraseña incorrecta';
       $('entrar').disabled = false; $('entrar').textContent = 'Entrar';
       $('clave').select();
+      return;
+    }
+    sesionGuardar(raw);
+    if ((!dispLeer() || forzarRegistro) && await bioDisponible()) {
+      ver('enrolar');
+      $('activar').onclick = async function () {
+        $('activar').disabled = true;
+        try { await registrar(raw); } catch (e) {}
+        mostrar(html);
+      };
+      $('ahora-no').onclick = function () { mostrar(html); };
+    } else {
+      mostrar(html);
     }
   });
 })();
